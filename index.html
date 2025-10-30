@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Simulador de Libertação Financeira: Calcule o Tempo Exato para Viver de Renda</title>
+    <meta name="description" content="Descubra quanto tempo você está perdendo na Poupança! Use nossa calculadora de Juros Compostos para ver o capital e o prazo exato para sua Independência Financeira.">
+    <meta name="keywords" content="Libertação Financeira, Viver de Renda, Tempo Exato, Poupança, Juros Compostos, Independência Financeira, Simulador">
+    
+    <style>
+        /* CSS PREMIUM: PRETO E DOURADO SÓBRIO (#ba943c) */
+        :root {
+            --cor-fundo-principal: #000000;
+            --cor-cartao: #1A1A1A;
+            --cor-destaque: #ba943c;
+            --cor-texto-principal: #F0F0F0;
+            --cor-texto-secundario: #8D8D8D;
+            --cor-sombra: rgba(0, 0, 0, 0.6);
+            --cor-disclaimer: #444444; 
+
+            --cor-sucesso: #ba943c;
+            --cor-alerta: #DC3545;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--cor-fundo-principal);
+            color: var(--cor-texto-principal);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--cor-cartao);
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px var(--cor-sombra);
+            border: 1px solid var(--cor-destaque);
+        }
+
+        h1 {
+            color: var(--cor-destaque);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        h1 span {
+            display: block;
+            font-size: 0.6em;
+            color: var(--cor-texto-secundario);
+            margin-top: 5px;
+            font-weight: normal;
+            letter-spacing: 1px;
+            text-transform: none;
+        }
+
+        p {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            color: var(--cor-texto-secundario);
+        }
+
+        /* AJUSTE: Redução ligeira da fonte dos labels */
+        .input-group label {
+            font-weight: 600;
+            color: var(--cor-texto-principal);
+            font-size: 0.9em; /* 10% menor */
+        }
+
+        .input-group input[type="number"] {
+            padding: 14px;
+            border: 1px solid var(--cor-destaque);
+            border-radius: 5px;
+            font-size: 1.05em;
+            background-color: #000000;
+            color: var(--cor-texto-principal);
+        }
+        
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--cor-destaque);
+            color: var(--cor-fundo-principal);
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .resultado, .comparacao-secao {
+            margin-top: 40px;
+            padding: 25px 0;
+            border-top: 1px solid var(--cor-texto-secundario);
+        }
+
+        .resultado h2, .comparacao-secao h3 {
+            color: var(--cor-destaque);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .resultado-item {
+            background-color: #0a0a0a;
+            border: 1px solid rgba(186, 148, 60, 0.3);
+            padding: 18px;
+            border-radius: 5px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1em;
+            box-shadow: 0 1px 5px var(--cor-sombra);
+        }
+        
+        /* Estilo para destaque na Idade e Custo */
+        .resultado-premium-destaque {
+            background-color: var(--cor-destaque);
+            color: var(--cor-fundo-principal);
+            font-weight: bold;
+        }
+        
+        .resultado-premium-destaque .resultado-value {
+            font-size: 1.2em;
+        }
+
+        /* Estilo do BLOQUEIO PREMIUM */
+        #bloqueio-premium {
+            text-align: center; 
+            border: 2px solid var(--cor-destaque); 
+            padding: 30px; 
+            border-radius: 5px; 
+            background-color: #0A0A0A;
+        }
+        
+        /* Novo estilo para a lista de benefícios no bloqueio */
+        #bloqueio-premium ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px auto;
+            text-align: left;
+            max-width: 400px;
+        }
+        #bloqueio-premium li {
+            font-size: 1.05em;
+            margin-bottom: 10px;
+            color: var(--cor-texto-principal);
+        }
+        #bloqueio-premium li::before {
+            content: '✅';
+            margin-right: 10px;
+            color: var(--cor-destaque);
+        }
+        
+        /* NOVO ESTILO: DISCLAIMER */
+        .disclaimer-secao {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--cor-disclaimer);
+            text-align: center;
+            font-size: 0.85em;
+            color: var(--cor-disclaimer);
+        }
+        .disclaimer-secao p {
+            margin: 0;
+            padding: 5px 0;
+            line-height: 1.4;
+            color: var(--cor-disclaimer);
+            text-align: center;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Simulador de Libertação Financeira</h1>
+        <p>Use o Simulador Libertação Financeira, a calculadora mais precisa para descobrir **quanto você precisa para viver de renda** e o **tempo exato** até sua **independência financeira**. Inicie seu cálculo de **juros compostos** e veja imediatamente o potencial do seu investimento.</p>
+
+        <div class="grid-inputs">
+            
+            <div class="input-group">
+                <label for="metaRenda">Meta de Renda Passiva Mensal (R$):</label>
+                <input type="number" id="metaRenda" value="5000" min="100" required placeholder="Ex: 5000">
+            </div>
+
+            <div class="input-group">
+                <label for="inicial">Investimento Inicial (R$):</label>
+                <input type="number" id="inicial" value="20000" min="0" required placeholder="Ex: 20000">
+            </div>
+
+            <div class="input-group">
+                <label for="aporteMensal">Aporte Mensal (R$):</label>
+                <input type="number" id="aporteMensal" value="1000" min="0" required placeholder="Ex: 1000">
+            </div>
+            
+            <div class="input-group">
+                <label for="jurosAnual">Taxa de Rendimento Anual (%):</label>
+                <input type="number" id="jurosAnual" value="10" min="1" step="1" required placeholder="Ex: 10">
+            </div>
+
+            <div class="input-group">
+                <label for="inflacaoAnual">Taxa de Inflação Anual (%):</label>
+                <input type="number" id="inflacaoAnual" value="4" min="0" required placeholder="Ex: 4">
+            </div>
+            
+            <div class="input-group">
+                <label for="idadeAtual">Sua Idade Atual (Opcional):</label>
+                <input type="number" id="idadeAtual" value="30" min="18" placeholder="Ex: 30">
+            </div>
+            
+        </div>
+
+        <button onclick="simular()">Calcular Minha Libertação Financeira</button>
+
+        <div id="resultado" class="resultado" style="display: none;">
+            <h2>Resultados Otimizados da Libertação Financeira</h2>
+            <div id="tempoNecessario" class="resultado-item"></div>
+            <div id="capitalFinal" class="resultado-item"></div>
+            
+            <div id="idadeLibertacao" class="resultado-item" style="display: none;"></div> 
+        </div>
+
+        <div id="comparacao" class="comparacao-secao" style="display: none;">
+            </div>
+
+        <p id="aviso" class="aviso" style="display: none;"></p>
+        
+        <div class="disclaimer-secao">
+            <p><strong>Aviso Legal (Disclaimer):</strong></p>
+            <p>Este é um simulador de caráter meramente **educacional e informativo**. Os resultados são **projeções hipotéticas** baseadas nas variáveis de entrada e nos juros compostos. O rendimento da Poupança de 6,0% é um **valor estimado** para fins comparativos, não refletindo sua taxa variável em tempo real. Os rendimentos e a Inflação são taxas **estimadas**, e não garantidas. O desempenho financeiro real pode variar drasticamente. Antes de investir, consulte um profissional certificado.</p>
+        </div>
+    </div>
+
+    <script>
+        // --- CONSTANTES ---
+        const TAXA_POUPANCA_ANUAL = 6.0; 
+        const LIMITE_MESES = 1200; // 100 anos * 12 meses
+
+        // Variável de estado do desbloqueio (Global)
+        let isPremiumUnlocked = false; 
+
+        // --- FUNÇÕES AUXILIARES ---
+        function formatarReal(valor) {
+            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function calcularTempoAdicional(mesesOtimizado, mesesConservador) {
+            const diffMeses = mesesConservador - mesesOtimizado;
+            if (diffMeses <= 0) return { texto: "Você já superou a Poupança!", anos: 0 };
+            const anos = Math.floor(diffMeses / 12);
+            const meses = diffMeses % 12;
+            return { texto: `${anos} anos e ${meses} meses`, anos: anos };
+        }
+        
+        // --- CÁLCULO: Custo da Demora (Simples) ---
+        function calcularCustoDaDemora(inicial, aporteMensal, taxaAnualOtimizada, taxaAnualConservadora, inflacaoAnual, tempoTotalMeses) {
+            const taxaNominalOtimizada = taxaAnualOtimizada / 100;
+            const taxaNominalConservadora = taxaAnualConservadora / 100;
+            const taxaInflacao = inflacaoAnual / 100;
+            
+            const taxaRealAnualOtimizada = (1 + taxaNominalOtimizada) / (1 + taxaInflacao) - 1;
+            const taxaRealMensalOtimizada = Math.pow(1 + taxaRealAnualOtimizada, 1 / 12) - 1;
+            
+            const taxaRealAnualConservadora = (1 + taxaNominalConservadora) / (1 + taxaInflacao) - 1;
+            const taxaRealMensalConservadora = Math.pow(1 + taxaRealAnualConservadora, 1 / 12) - 1;
+
+            let capitalOtimizado = inicial;
+            let capitalConservador = inicial;
+            
+            for (let n_mes = 0; n_mes < tempoTotalMeses; n_mes++) {
+                // Cálculo de juros compostos descontando a inflação (valor real)
+                capitalOtimizado = capitalOtimizado * (1 + taxaRealMensalOtimizada) + aporteMensal;
+                capitalConservador = capitalConservador * (1 + taxaRealMensalConservadora) + aporteMensal;
+            }
+
+            // O custo é a diferença de capital acumulado no mesmo período (tempo otimizado)
+            return Math.abs(capitalOtimizado - capitalConservador);
+        }
+
+        // FUNÇÃO PRINCIPAL
+        function calcularIndependenciaFinanceira(inicial, aporteMensal, taxaAnual, inflacaoAnual, metaRendaMensal) {
+            const taxaNominal = taxaAnual / 100;
+            const taxaInflacao = inflacaoAnual / 100;
+            
+            const taxaRealAnual = (1 + taxaNominal) / (1 + taxaInflacao) - 1;
+            const taxaRealMensal = Math.pow(1 + taxaRealAnual, 1 / 12) - 1;
+            const taxaJurosMensalNominal = taxaNominal / 12; 
+
+            if (taxaRealMensal <= 0 || taxaJurosMensalNominal <= 0) {
+                return {
+                    erro: "O rendimento real é muito baixo ou negativo. A meta será muito difícil de atingir ou impossível."
+                };
+            }
+
+            const capitalNecessario = metaRendaMensal / taxaJurosMensalNominal;
+            
+            let n_meses = 0;
+            let capitalAcumulado = inicial;
+            
+            while (capitalAcumulado < capitalNecessario && n_meses < LIMITE_MESES) { 
+                capitalAcumulado = capitalAcumulado * (1 + taxaRealMensal) + aporteMensal;
+                n_meses++;
+            }
+
+            if (capitalAcumulado < capitalNecessario) {
+                return {
+                    erro: `A meta de ${formatarReal(capitalNecessario)} é muito alta para o prazo de 100 anos com seus aportes e rendimento atuais.`,
+                    capitalNecessario: capitalNecessario,
+                    n_meses: LIMITE_MESES,
+                    tempo: "Mais de 100 anos",
+                    anos: 100
+                };
+            }
+
+            const anos = Math.floor(n_meses / 12);
+            const meses = n_meses % 12;
+
+            return {
+                capitalNecessario: capitalNecessario,
+                tempo: `${anos} anos e ${meses} meses`,
+                capitalFinal: capitalAcumulado,
+                n_meses: n_meses,
+                anos: anos
+            };
+        }
+        
+        // --- FUNÇÃO DE DESBLOQUEIO VISUAL (Atualizada) ---
+        function desbloquearComparacao(resultadoConservador, resultadoOtimizado, idadeAtual, custoDaDemora) {
+            
+            const idadeConservadora = idadeAtual ? idadeAtual + resultadoConservador.anos : null;
+            
+            // 1. Atualiza o item de Idade da Libertação no bloco Otimizado (Resultado)
+            if (idadeAtual) {
+                const idadeOtimizada = idadeAtual + resultadoOtimizado.anos;
+                const idadeLibertacaoDiv = document.getElementById('idadeLibertacao');
+                idadeLibertacaoDiv.style.display = 'flex';
+                // Garante que o item da idade otimizada use a mesma classe de resultados padrão
+                idadeLibertacaoDiv.innerHTML = `<span class="resultado-label">Idade da Libertação Financeira:</span><span class="resultado-value" style="color: var(--cor-sucesso);">${idadeOtimizada} anos</span>`;
+            }
+            
+            // 2. Monta o conteúdo do bloco Premium (Comparação)
+            let htmlConteudo = `
+                <h3>✅ Análise Premium Desbloqueada: O Custo de Investir na Poupança</h3>
+                
+                <div class="resultado-item resultado-premium-destaque">
+                    <span class="resultado-label">💰 CUSTO DA DEMORA (Perda de Riqueza em Juros):</span>
+                    <span class="resultado-value">${formatarReal(custoDaDemora)}</span>
+                </div>
+                
+                <p style="font-size: 0.9em; color: var(--cor-texto-secundario); margin-top: 5px; text-align: center;">*O Custo da Demora é o dinheiro que você deixa de acumular por investir no cenário conservador durante o seu tempo de otimização.</p>
+
+                <div style="margin-top: 25px;">
+                    <div class="resultado-item">
+                        <span class="resultado-label">Tempo Necessário na Poupança (Estimado):</span>
+                        <span class="resultado-value" style="color: var(--cor-alerta);">${resultadoConservador.tempo}</span>
+                    </div>
+                    
+                    ${idadeAtual ? `
+                        <div class="resultado-item">
+                            <span class="resultado-label">Sua Idade da Libertação na Poupança:</span>
+                            <span class="resultado-value" style="color: var(--cor-alerta);">${idadeConservadora} anos</span>
+                        </div>
+                        ` : ''
+                    }
+                    
+                    <div class="resultado-item">
+                        <span class="resultado-label">Tempo Adicional Perdido (Custo da Demora):</span>
+                        <span class="resultado-value" style="color: var(--cor-alerta);">${calcularTempoAdicional(resultadoOtimizado.n_meses, resultadoConservador.n_meses).texto}</span>
+                    </div>
+                </div>
+            `;
+                            
+            document.getElementById('comparacao').innerHTML = htmlConteudo;
+        }
+        
+        // [ ... FUNÇÃO checarStatusPagamentoNaURL() - SEM ALTERAÇÃO ... ]
+        function checarStatusPagamentoNaURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const collectionStatus = urlParams.get('collection_status'); 
+
+            if (status === 'approved' || collectionStatus === 'approved') {
+                isPremiumUnlocked = true;
+                return true;
+            }
+            return false;
+        }
+
+        // [ ... FUNÇÃO injetarBotaoMercadoPago() - SEM ALTERAÇÃO ... ]
+        function injetarBotaoMercadoPago() {
+            const container = document.getElementById('mp-button-container');
+            if (!container) return; 
+            
+            container.innerHTML = '';
+            
+            const script = document.createElement('script');
+            script.src = "https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js";
+            
+            script.setAttribute('data-preference-id', "44305955-3c3628ad-ce4f-4c98-a56b-3b36ce734e14");
+            script.setAttribute('data-source', "button");
+            
+            container.appendChild(script);
+        }
+
+        // --- FUNÇÃO PRINCIPAL DE SIMULAÇÃO ---
+        function simular(forceUnlock = false) {
+            const inicial = parseFloat(document.getElementById('inicial').value);
+            const aporteMensal = parseFloat(document.getElementById('aporteMensal').value);
+            const jurosAnual = parseFloat(document.getElementById('jurosAnual').value);
+            const inflacaoAnual = parseFloat(document.getElementById('inflacaoAnual').value);
+            const metaRenda = parseFloat(document.getElementById('metaRenda').value);
+            const idadeAtual = parseFloat(document.getElementById('idadeAtual').value) || null; // Novo campo
+
+            document.getElementById('resultado').style.display = 'none';
+            document.getElementById('comparacao').style.display = 'none';
+            document.getElementById('aviso').style.display = 'none';
+            document.getElementById('aviso').textContent = '';
+            document.getElementById('idadeLibertacao').style.display = 'none'; // Esconde por padrão
+
+            if (isNaN(inicial) || isNaN(aporteMensal) || isNaN(jurosAnual) || isNaN(inflacaoAnual) || isNaN(metaRenda) || metaRenda <= 0) {
+                document.getElementById('aviso').textContent = "Por favor, preencha todos os campos obrigatórios com valores válidos.";
+                document.getElementById('aviso').style.display = 'block';
+                return;
+            }
+
+            const resultadoOtimizado = calcularIndependenciaFinanceira(inicial, aporteMensal, jurosAnual, inflacaoAnual, metaRenda);
+
+            document.getElementById('resultado').style.display = 'block';
+
+            if (resultadoOtimizado.erro) {
+                document.getElementById('aviso').textContent = resultadoOtimizado.erro;
+                document.getElementById('aviso').style.display = 'block';
+                document.getElementById('tempoNecessario').innerHTML = '';
+                document.getElementById('capitalFinal').innerHTML = '';
+                return;
+            } else {
+                document.getElementById('tempoNecessario').innerHTML = `<span class="resultado-label">Tempo para Libertação Financeira:</span><span class="resultado-value">${resultadoOtimizado.tempo}</span>`;
+                document.getElementById('capitalFinal').innerHTML = `<span class="resultado-label">Capital Acumulado no Final (Valor de Hoje):</span><span class="resultado-value">${formatarReal(resultadoOtimizado.capitalNecessario)}</span>`;
+                
+                // Exibe a Idade da Libertação no bloco Otimizado
+                if (idadeAtual) {
+                     const idadeOtimizada = idadeAtual + resultadoOtimizado.anos;
+                     const idadeLibertacaoDiv = document.getElementById('idadeLibertacao');
+                     idadeLibertacaoDiv.style.display = 'flex';
+                     // AJUSTE: O item otimizado deve ter o mesmo estilo dos demais resultados primários
+                     idadeLibertacaoDiv.innerHTML = `<span class="resultado-label">Idade da Libertação Financeira:</span><span class="resultado-value" style="color: var(--cor-sucesso);">${idadeOtimizada} anos</span>`;
+                }
+            }
+
+            const resultadoConservador = calcularIndependenciaFinanceira(inicial, aporteMensal, TAXA_POUPANCA_ANUAL, inflacaoAnual, metaRenda);
+            
+            document.getElementById('comparacao').style.display = 'block';
+            
+            // Variáveis de cálculo Premium
+            let custoDaDemora = 0;
+            
+            if (!resultadoConservador.erro) {
+                custoDaDemora = calcularCustoDaDemora(inicial, aporteMensal, jurosAnual, TAXA_POUPANCA_ANUAL, inflacaoAnual, resultadoOtimizado.n_meses);
+            }
+            
+            if (isPremiumUnlocked || forceUnlock) {
+                if (resultadoConservador.erro) {
+                    document.getElementById('comparacao').innerHTML = `
+                        <h3>⚠️ Análise Premium: Custo da Poupança</h3>
+                        <p class="aviso" style="display: block; color: var(--cor-alerta);">Na poupança, a meta seria ainda mais difícil de atingir. Você não atingiria a meta em 100 anos.</p>
+                    `;
+                } else {
+                    desbloquearComparacao(resultadoConservador, resultadoOtimizado, idadeAtual, custoDaDemora);
+                }
+            } else {
+                // MOSTRA O BLOQUEIO E O BOTÃO DO MERCADO PAGO
+                document.getElementById('comparacao').innerHTML = `
+                    <div id="bloqueio-premium">
+                        <h3>🔒 Análise Estratégica Completa Bloqueada</h3>
+                        <p style="color: var(--cor-texto-principal);">Por apenas **R$ 9,90**, desbloqueie o caminho mais rápido para sua liberdade financeira!</p>
+                        
+                        <ul>
+                            <li>O **Custo Secreto da Poupança**: Veja o **tempo exato** que você está perdendo.</li>
+                            <li>**💰 Custo da Demora**: Descubra **quanto dinheiro** você perde em juros no cenário conservador.</li>
+                            <li>**Idade na Poupança**: Calcule sua **idade** de aposentadoria se você não otimizar.</li>
+                        </ul>
+
+                        <div id="mp-button-container" style="margin-top: 20px;">
+                            </div>
+                    </div>
+                `;
+                
+                // CHAMA A FUNÇÃO DE INJEÇÃO DO SCRIPT APÓS A DIV TER SIDO INSERIDA
+                injetarBotaoMercadoPago();
+            }
+        }
+        
+        // --- EXECUÇÃO AUTOMÁTICA NA CARGA DA PÁGINA ---
+        checarStatusPagamentoNaURL();
+        
+        if (isPremiumUnlocked) {
+             simular();
+        }
+
+    </script>
+
+</body>
+</html>
